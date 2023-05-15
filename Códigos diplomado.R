@@ -46,7 +46,8 @@ BDC_categoria <- B_D_CAT_new %>%
                                 IDC >16 & IDC <=24 ~ "severo")) %>% 
   mutate(cat_catarata= as.factor(cat_catarata)) %>%
   mutate(Jaula= as.factor(Jaula)) %>%
-  mutate(Centro= as.factor(Centro))
+  mutate(Centro= as.factor(Centro)) %>% 
+  mutate (IDC = as.factor(IDC))
 
 summary(BDC_categoria)
 
@@ -58,6 +59,16 @@ ggplot(BDC_categoria,aes(cat_catarata,Peso))+
 ggplot(BDC_categoria,aes(cat_catarata,K))+
   geom_boxplot()
 
+ggplot(BDC_categoria,aes(cat_catarata,K,
+                         fill=Jaula))+
+geom_boxplot()
+
+ggplot(BDC_categoria,aes(Jaula,K,
+                         fill=cat_catarata))+
+  geom_boxplot()
+
+#Respuesta 4
+
 #tabla frecuencia
 table(BDC_categoria$cat_catarata)
 
@@ -67,6 +78,18 @@ table(BDC_categoria$Jaula)
 #tabla frecuencia Centro 
 table(BDC_categoria$Centro)
 
+#grafico de dispersion 
 
+#respuesta pregunta 3
+
+hist(BDC_categoria$IDC)
+
+colnames(BDC_categoria)
+
+plot(ecdf(BDC_categoria$IDC))
+
+#tamaño de los efectos 
+
+plot.design(BDC_categoria $Peso ~ BDC_categoria$cat_catarata + BDC_categoria $Jaula)
 
 
