@@ -1,31 +1,18 @@
 #Evaluacion diplomado con analisis de base de datos. 
 
-install.packages("dplyr")
+#install.packages("dplyr")
 library(dplyr)
 library(readxl)
-install.packages("tidyr")
+#install.packages("tidyr")
 library(tidyr)
 library(ggplot2)
 
 library(gridExtra)
 
-# Habilita paquetes
-library(readxl) # Para importar datos a R
-
-library(dplyr) # Para manipular datos
-
-library(tidyr) # Para manipular datos
-
-library(ggplot2) # Para hacer gráficos
-
-library(gridExtra)
-
 # Importar base de datos
-salmon <- read_excel("salmon.xlsx", na = "NA")
+
 B_D_CAT_new$Fecha <- as.Date(B_D_CAT_new$Fecha,format = "%d/%m/%Y")
-# Ordenar la variable Sample de menor a mayor usando arrange
-salmon <- salmon%>% 
-  arrange(Sample)
+
 
 # Transformar variables tipo chr a factor
 salmon$Sample <- as.factor(salmon$Sample)
@@ -52,7 +39,33 @@ B_D_CAT_new$Fecha <- as.Date(B_D_CAT_new$Fecha,format = "%d/%m/%Y")
 
 class(B_D_CAT_$Fecha)
 
+BDC_categoria <- B_D_CAT_new %>% 
+  mutate(cat_catarata=case_when(IDC==0~"normal",
+                                IDC > 0 & IDC <= 8 ~ "leve",
+                                IDC > 8 & IDC <=16 ~ "moderado",
+                                IDC >16 & IDC <=24 ~ "severo")) %>% 
+  mutate(cat_catarata= as.factor(cat_catarata)) %>%
+  mutate(Jaula= as.factor(Jaula)) %>%
+  mutate(Centro= as.factor(Centro))
 
+summary(BDC_categoria)
+
+#boxplot peso vs cAT_catarata
+ggplot(BDC_categoria,aes(cat_catarata,Peso))+
+  geom_boxplot()
+
+#boxplot
+ggplot(BDC_categoria,aes(cat_catarata,K))+
+  geom_boxplot()
+
+#tabla frecuencia
+table(BDC_categoria$cat_catarata)
+
+#tabla frecuencia Jaula
+table(BDC_categoria$Jaula)
+
+#tabla frecuencia Centro 
+table(BDC_categoria$Centro)
 
 
 
