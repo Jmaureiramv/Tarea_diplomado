@@ -9,38 +9,43 @@ library(ggplot2)
 
 library(gridExtra)
 
-# Importar base de datos
+# 1° Importar base de datos
 
-# library(readxl)
-B_D_CAT <- read_excel("B_D_CAT.xlsx")
+B_D_CAT <- read_excel("B_D_CAT.xlsx", col_types = c("text", 
+                                                    "date", "numeric", "numeric", "numeric", 
+                                                    "numeric", "numeric", "numeric"))
+View(B_D_CAT)
 
-B_D_CAT_new$Fecha <- as.Date(B_D_CAT_new$Fecha,format = "%d/%m/%Y")
+# 2° Identificar datos atípicos, duplicados o faltantes (NA) con summary
 
+summary(B_D_CAT)
+
+
+# 3° Omitir/quitar datos faltantes na.omit()
+B_D_CAT_new <- na.omit(B_D_CAT)
+
+# 4° Ver la dimensión de la nueva base de datos con datos faltantes
+dim(B_D_CAT)
+
+# 5° Ver la dimensión de la nueva base de datos sin datos faltantes 
+dim(B_D_CAT_new)
 
 # Transformar variables tipo chr a factor
-salmon$Sample <- as.factor(salmon$Sample)
+
 salmon$Ploidy <- as.factor(salmon$Ploidy)
 salmon$Family <- as.factor(salmon$Family)
 salmon$Tank <- as.factor(salmon$Tank)
 
-# Identificar datos atípicos, duplicados o faltantes (NA) con summary
-summary(B_D_CAT)
+# Dar formato a la fecha en la nueva base de datos
 
-# Ver la dimensión de la nueva base de datos con datos faltantes
-dim(B_D_CAT)
+B_D_CAT_new$Fecha <- as.Date(B_D_CAT_new$Fecha,format = "%d/%m/%Y")
 
-# Omitir/quitar datos faltantes na.omit()
-B_D_CAT_new <- na.omit(B_D_CAT)
-
-# Ver la dimensión de la nueva base de datos sin datos faltantes 
-dim(B_D_CAT_new)
 
 #resumen de nueva base de datos B_D_CAT_new
 summary(B_D_CAT_new)
 
 B_D_CAT_new$Fecha <- as.Date(B_D_CAT_new$Fecha,format = "%d/%m/%Y")
 
-class(B_D_CAT_$Fecha)
 
 BDC_categoria <- B_D_CAT_new %>% 
   mutate(cat_catarata=case_when(IDC==0~"normal",
@@ -54,6 +59,19 @@ BDC_categoria <- B_D_CAT_new %>%
 
 summary(BDC_categoria)
 
+# Grafica de barras 
+
+BDC_categoria$cat_catarata <- factor(BDC_categoria$cat_catarata, levels = c("normal", "leve", "moderado", "severo"))
+barplot(table(BDC_categoria$cat_catarata))
+
+ggplot(BDC_categoria, aes(x = cat_catarata, y =  )) +
+  geom_bar(stat = "identity", fill = "blue") +
+  labs(title = "Gráfico de Barras",
+       x = "Categoria",
+       y = "Índice de Condición")
+
+table(BDC_categoria$cat_catarata)
+# 
 #boxplot peso vs cAT_catarata
 ggplot(BDC_categoria,aes(cat_catarata,Peso))+
   geom_boxplot()
@@ -85,11 +103,30 @@ table(BDC_categoria$Centro)
 
 #respuesta pregunta 3
 
-hist(BDC_categoria$IDC)
+hist(BDC_categoria$Peso)
+
+hist(BDC_categoria$K)
+
+barplot(frecuencia, names.arg = grados_cataratas, 
+        main = "Grados de Cataratas",
+        xlab = "Grado",
+        ylab = "Frecuencia",
+        col = "blue",
+        border = "white")
+
+#Cataratas_resumen <- table(datos_all$Nivel_cataratas)
+#barplot(Cataratas_resumen)
+
+#datos_all$Nivel_cataratas <- factor(datos_all$Nivel_cataratas, levels = c("Bajo", "Medio", "Alto"))
+#barplot(table(datos_all$Nivel_cataratas))
+
+BDC_categoria$cat_catarata <- factor(BDC_categoria$cat_catarata, levels = c("Normal","Leve", "Moderado", "Severo"))
+barplot(table(BDC_categoria$cat_catarata))
+
 
 colnames(BDC_categoria)
 
-plot(ecdf(BDC_categoria$IDC))
+plot(ecdf(BDC_categoria)
 
 #tamaño de los efectos 
 
