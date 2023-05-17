@@ -11,6 +11,9 @@ library(gridExtra)
 
 # Importar base de datos
 
+# library(readxl)
+B_D_CAT <- read_excel("B_D_CAT.xlsx")
+
 B_D_CAT_new$Fecha <- as.Date(B_D_CAT_new$Fecha,format = "%d/%m/%Y")
 
 
