@@ -64,11 +64,18 @@ summary(BDC_categoria)
 BDC_categoria$cat_catarata <- factor(BDC_categoria$cat_catarata, levels = c("normal", "leve", "moderado", "severo"))
 barplot(table(BDC_categoria$cat_catarata))
 
-ggplot(BDC_categoria, aes(x = cat_catarata, y =  )) +
-  geom_bar(stat = "identity", fill = "blue") +
+
+
+BDC_categoria %>%
+  group_by(cat_catarata) %>%
+  count() %>%
+ggplot(aes(x = cat_catarata, y = n)) +
+  geom_col(fill = "blue") +
   labs(title = "Gráfico de Barras",
        x = "Categoria",
-       y = "Índice de Condición")
+       y = "Frecuencia de datos")
+
+
 
 table(BDC_categoria$cat_catarata)
 # 
