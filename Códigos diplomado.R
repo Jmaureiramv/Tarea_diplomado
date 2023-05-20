@@ -6,8 +6,9 @@ library(readxl)
 #install.packages("tidyr")
 library(tidyr)
 library(ggplot2)
-
 library(gridExtra)
+#install.packages("knitr")
+library(knitr)
 
 # 1° Importar base de datos
 
@@ -30,11 +31,6 @@ dim(B_D_CAT)
 # 5° Ver la dimensión de la nueva base de datos sin datos faltantes 
 dim(B_D_CAT_new)
 
-# Transformar variables tipo chr a factor
-
-salmon$Ploidy <- as.factor(salmon$Ploidy)
-salmon$Family <- as.factor(salmon$Family)
-salmon$Tank <- as.factor(salmon$Tank)
 
 # Dar formato a la fecha en la nueva base de datos
 
@@ -43,6 +39,7 @@ B_D_CAT_new$Fecha <- as.Date(B_D_CAT_new$Fecha,format = "%d/%m/%Y")
 
 #resumen de nueva base de datos B_D_CAT_new
 summary(B_D_CAT_new)
+
 
 B_D_CAT_new$Fecha <- as.Date(B_D_CAT_new$Fecha,format = "%d/%m/%Y")
 
@@ -55,17 +52,19 @@ BDC_categoria <- B_D_CAT_new %>%
   mutate(cat_catarata= as.factor(cat_catarata)) %>%
   mutate(Jaula= as.factor(Jaula)) %>%
   mutate(Centro= as.factor(Centro)) %>% 
-  mutate (IDC = as.factor(IDC))
+  mutate (IDC = as.factor(IDC)) %>% 
+  filter(K < 2.5)
+# Quitar datos no logicos y extremos
 
 summary(BDC_categoria)
 
-# Grafica de barras 
+# Orden logico de las categorias 
 
 BDC_categoria$cat_catarata <- factor(BDC_categoria$cat_catarata, levels = c("normal", "leve", "moderado", "severo"))
 barplot(table(BDC_categoria$cat_catarata))
 
 
-
+# Histograma de categoria catartas 
 BDC_categoria %>%
   group_by(cat_catarata) %>%
   count() %>%
@@ -75,33 +74,60 @@ ggplot(aes(x = cat_catarata, y = n)) +
        x = "Categoria",
        y = "Frecuencia de datos")
 
+# Histograma de K
+ggplot(BDC_categoria, aes(x = K)) + 
+  geom_histogram(col='black', fill='green', alpha=0.4)
+#Historama de peso
 
+ggplot(BDC_categoria, aes(x = Peso)) + 
+  geom_histogram(col='black', fill='green', alpha=0.4)
 
-table(BDC_categoria$cat_catarata)
-# 
-#boxplot peso vs cAT_catarata
-ggplot(BDC_categoria,aes(cat_catarata,Peso))+
-  geom_boxplot()
+#Graficos de distribucion empirica 
+
+plot(ecdf(BDC_categoria$K),main="Distribucion empirica K",xlab="K")
+
+plot(ecdf(BDC_categoria$Peso),main="Distribucion empirica peso",xlab="Peso")
+
 
 #boxplot
 ggplot(BDC_categoria,aes(cat_catarata,K))+
-  geom_boxplot()
+  geom_boxplot(fill="blue", alpha= 0.4)
 
+#boxplot peso vs cAT_catarata
+ggplot(BDC_categoria,aes(cat_catarata,Peso))+
+  geom_boxplot(fill="blue", alpha= 0.4)
+
+
+# Boxplot jaua categoria K
 ggplot(BDC_categoria,aes(cat_catarata,K,
                          fill=Jaula))+
 geom_boxplot()
 
+# Boxplot 
 ggplot(BDC_categoria,aes(Jaula,K,
                          fill=cat_catarata))+
   geom_boxplot()
 
 #Respuesta 4
 
+# Resumen de tabla estadistica descriptiva 
+BDC_categoria %>% group_by(cat_catarata) %>%  
+  summarise(n=n(),promedio=mean(K),desv=sd(K),
+            mediana=median(K),valor_maximo=max(K), 
+            valor_minimo=min(K)) %>% kable(align="c",digits = 2)
+
+BDC_categoria %>% group_by(Jaula) %>%  
+  summarise(n=n(),promedio=mean(K),desv=sd(K),
+            mediana=median(K),valor_maximo=max(K), 
+            valor_minimo=min(K)) %>% kable(align="c",digits = 2)
+
 #tabla frecuencia
-table(BDC_categoria$cat_catarata)
+table(BDC_categoria$cat_catarata) %>% 
+  kable(align="c",digits = 2)
 
 #tabla frecuencia Jaula
-table(BDC_categoria$Jaula)
+table(BDC_categoria$Jaula) %>% 
+  kable(align="c",digits = 2)
 
 #tabla frecuencia Centro 
 table(BDC_categoria$Centro)
@@ -110,33 +136,26 @@ table(BDC_categoria$Centro)
 
 #respuesta pregunta 3
 
-hist(BDC_categoria$Peso)
 
 hist(BDC_categoria$K)
 
-barplot(frecuencia, names.arg = grados_cataratas, 
-        main = "Grados de Cataratas",
-        xlab = "Grado",
-        ylab = "Frecuencia",
-        col = "blue",
-        border = "white")
+hist(BDC_categoria$Peso)
 
-#Cataratas_resumen <- table(datos_all$Nivel_cataratas)
-#barplot(Cataratas_resumen)
+ggplot(BDC_categoria, aes(x = K)) + 
+  geom_histogram(col='black', fill='green', alpha=0.4)
 
-#datos_all$Nivel_cataratas <- factor(datos_all$Nivel_cataratas, levels = c("Bajo", "Medio", "Alto"))
-#barplot(table(datos_all$Nivel_cataratas))
-
-BDC_categoria$cat_catarata <- factor(BDC_categoria$cat_catarata, levels = c("Normal","Leve", "Moderado", "Severo"))
-barplot(table(BDC_categoria$cat_catarata))
-
-
-colnames(BDC_categoria)
-
-plot(ecdf(BDC_categoria)
+ggplot(BDC_categoria, aes(x = Peso)) + 
+  geom_histogram(col='black', fill='green', alpha=0.4)
 
 #tamaño de los efectos 
 
 plot.design(BDC_categoria $Peso ~ BDC_categoria$cat_catarata + BDC_categoria $Jaula)
+
+colnames(BDC_categoria)
+
+
+
+
+
 
 

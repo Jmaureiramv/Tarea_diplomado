@@ -6,25 +6,34 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
+#install.packages("dplyr")
+library(dplyr)
+library(readxl)
+#install.packages("tidyr")
+library(tidyr)
+library(ggplot2)
+library(gridExtra)
+```
+# Titulo: Cataratas en Salar
+
+
+## Objetivos: 
+- Se asociara el indice de desarrollo de las cataratas como indicador de severidad productiva.
+- Se espera que peces con mayor grado de cataratas, tengas un indice de condicion menor.
+
+## Base de datos y analisis exploratorios
+
+1° Importar base de datos
+```{r}
+B_D_CAT <- read_excel("B_D_CAT.xlsx", col_types = c("text", 
+                                                    "date", "numeric", "numeric", "numeric", 
+                                                    "numeric", "numeric", "numeric"))
+# View(B_D_CAT)
+```
+2° Identificar datos atípicos, duplicados o faltantes (NA) con summary
+```{r}
+summary(B_D_CAT)
 ```
 
-## R Markdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
