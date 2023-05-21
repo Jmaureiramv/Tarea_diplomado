@@ -14,6 +14,8 @@ library(readxl)
 library(tidyr)
 library(ggplot2)
 library(gridExtra)
+#install.packages("knitr")
+library(knitr)
 ```
 # Titulo: Cataratas en Salar
 
@@ -24,16 +26,187 @@ library(gridExtra)
 
 ## Base de datos y analisis exploratorios
 
-1° Importar base de datos
+
 ```{r}
 B_D_CAT <- read_excel("B_D_CAT.xlsx", col_types = c("text", 
                                                     "date", "numeric", "numeric", "numeric", 
                                                     "numeric", "numeric", "numeric"))
+#View(B_D_CAT)
+
+# 2° Identificar datos atípicos, duplicados o faltantes (NA) con summary
+
+# summary(B_D_CAT)
+
+
+# 3° Omitir/quitar datos faltantes na.omit()
+B_D_CAT_new <- na.omit(B_D_CAT)
+
+# 4° Ver la dimensión de la nueva base de datos con datos faltantes
+# dim(B_D_CAT)
+
+# 5° Ver la dimensión de la nueva base de datos sin datos faltantes 
+# dim(B_D_CAT_new)
+
+
+# Dar formato a la fecha en la nueva base de datos
+
+B_D_CAT_new$Fecha <- as.Date(B_D_CAT_new$Fecha,format = "%d/%m/%Y")
+
+
+#resumen de nueva base de datos B_D_CAT_new
+# summary(B_D_CAT_new)
+
+
+B_D_CAT_new$Fecha <- as.Date(B_D_CAT_new$Fecha,format = "%d/%m/%Y")
+
+
+BDC_categoria <- B_D_CAT_new %>% 
+  mutate(cat_catarata=case_when(IDC==0~"normal",
+                                IDC > 0 & IDC <= 8 ~ "leve",
+                                IDC > 8 & IDC <=16 ~ "moderado",
+                                IDC >16 & IDC <=24 ~ "severo")) %>% 
+  mutate(cat_catarata= as.factor(cat_catarata)) %>%
+  mutate(Jaula= as.factor(Jaula)) %>%
+  mutate(Centro= as.factor(Centro)) %>% 
+  mutate (IDC = as.factor(IDC)) %>% 
+  filter(K < 2.5)
+# Quitar datos no logicos y extremos
+
+# summary(BDC_categoria)
+
+# Orden logico de las categorias 
+
+BDC_categoria$cat_catarata <- factor(BDC_categoria$cat_catarata, levels = c("normal", "leve", "moderado", "severo"))
+
+
 # View(B_D_CAT)
 ```
-2° Identificar datos atípicos, duplicados o faltantes (NA) con summary
-```{r}
-summary(B_D_CAT)
+
+<br>
+```{r,echo=FALSE, fig.align="center", fig.width=10, fig.height=6}
+# Histograma de K
+ggplot(BDC_categoria, aes(x = K)) + 
+  geom_histogram(col='black', fill='green', alpha=0.4,bins = 12)
+#Historama de peso
+
+ggplot(BDC_categoria, aes(x = Peso)) + 
+  geom_histogram(col='black', fill='green', alpha=0.4,bins = 12)
+
+
+
 ```
 
 
+<br>
+<br>
+```{r,echo=FALSE, fig.align="center", fig.width=10, fig.height=6}
+ggplot(BDC_categoria,aes(Jaula,K,
+                         fill=Jaula))+
+geom_boxplot()+facet_wrap(~cat_catarata)+
+  theme(legend.position = "none")
+```
+<br>
+<br>
+
+```{r, echo=FALSE, fig.align="center", fig.width=10, fig.height=6}
+table(BDC_categoria$cat_catarata) %>% 
+  kable(align="c",digits = 2,col.names = c("categoria catarata","Frecuencia"))
+
+#tabla frecuencia Jaula
+table(BDC_categoria$Jaula) %>% 
+  kable(align="c",digits = 2,col.names = c("Jaula","Frecuencia"))
+
+```
+
+```{r, echo=FALSE, fig.align="center", fig.width=10, fig.height=6}
+G1 <- BDC_categoria %>%
+  group_by(IDC) %>%
+  count() %>%
+  ggplot(aes(x = IDC, y = n)) +
+  geom_col(fill = "blue") +
+  labs(title = "Indice de desarrollo de cataratas",
+       x = "Puntuación del IDC",
+       y = "Frecuencia de datos")
+
+G2<- BDC_categoria %>%
+  group_by(cat_catarata) %>%
+  count() %>%
+ggplot(aes(x = cat_catarata, y = n)) +
+  geom_col(fill = "blue") +
+  labs(title = "Categorias del Indice de desarrollo de cataratas",
+       x = "Categoria",
+       y = "Frecuencia de datos")
+
+grid.arrange(G1,G2,ncol=2)
+```
+<br>
+<br>
+
+## Analisis a traves de Boxplot
+
+<br>
+<br>
+<br>
+```{r,echo=FALSE, fig.align="center", fig.width=10, fig.height=6}
+Y1 <- ggplot(BDC_categoria,aes(cat_catarata,K))+
+  geom_boxplot(fill="blue", alpha= 0.4)+
+  labs(x = "Categoria Catartas",title = "Indice condicion v/s Categoria cataratas")+
+  theme(plot.title= element_text(size = 17),
+        axis.title.x = element_text(size = 14),
+        axis.text.x = element_text(size = 14),
+        axis.title.y = element_text(size = 14),
+        axis.text.y = element_text(size = 14))
+
+#boxplot peso vs cAT_catarata
+Y2 <- ggplot(BDC_categoria,aes(cat_catarata,Peso))+
+  geom_boxplot(fill="blue", alpha= 0.4)+
+  labs(x = "Categoria Catartas",title = "Peso v/s Categoria cataratas")+
+  theme(plot.title= element_text(size = 17),
+        axis.title.x = element_text(size = 14),
+        axis.text.x = element_text(size = 14),
+        axis.title.y = element_text(size = 14),
+        axis.text.y = element_text(size = 14))
+
+grid.arrange(Y1,Y2,ncol=2)
+
+```
+
+
+**Nota** La variable peso no seria la mas indicada por que la toma de muestras de datos se tomaron en distintas fechas del ciclo productivo. La variable de K es la mas indicada.
+
+<br>
+<br>
+<br>
+
+##
+
+
+```{r,echo=FALSE, fig.align="center", fig.width=10, fig.height=6}
+plot(ecdf(BDC_categoria$IDC),main="Distribucion empirica IDC",xlab="IDC")
+```
+
+
+**Nota**Variable corresponde a una variable cuantitativa discreta.
+
+
+```{r,echo=FALSE, fig.align="center", fig.width=10, fig.height=6}
+BDC_categoria %>% group_by(cat_catarata) %>%  
+  summarise(n=n(),promedio=mean(K),desv=sd(K),
+            mediana=median(K),valor_maximo=max(K), 
+            valor_minimo=min(K)) %>% kable(align="c",digits = 2)
+
+BDC_categoria %>% group_by(Jaula) %>%  
+  summarise(n=n(),promedio=mean(K),desv=sd(K),
+            mediana=median(K),valor_maximo=max(K), 
+            valor_minimo=min(K)) %>% kable(align="c",digits = 2)
+```
+
+
+
+```{r,echo=FALSE, fig.align="center", fig.width=10, fig.height=6}
+categoria <- BDC_categoria $cat_catarata
+Jaula <- BDC_categoria $Jaula
+plot.design(BDC_categoria $K ~ categoria + Jaula, 
+xlab = "Factores", ylab = "Indice condicion (K)")
+```
+**Nota** En ambos factores, se observa una gran magnitud de efecto.En categoria severa junto con la j 204 se onserva una menor media media del indice de condicion (K).

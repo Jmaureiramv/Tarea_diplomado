@@ -64,15 +64,27 @@ BDC_categoria$cat_catarata <- factor(BDC_categoria$cat_catarata, levels = c("nor
 barplot(table(BDC_categoria$cat_catarata))
 
 
-# Histograma de categoria catartas 
-BDC_categoria %>%
+# Histograma de categoria catartas (grafico de barras) 
+
+G1 <- BDC_categoria %>%
+  group_by(IDC) %>%
+  count() %>%
+  ggplot(aes(x = IDC, y = n)) +
+  geom_col(fill = "blue") +
+  labs(title = "Indice de desarrollo de cataratas",
+       x = "Puntuación del IDC",
+       y = "Frecuencia de datos")
+
+G2<- BDC_categoria %>%
   group_by(cat_catarata) %>%
   count() %>%
 ggplot(aes(x = cat_catarata, y = n)) +
   geom_col(fill = "blue") +
-  labs(title = "Gráfico de Barras",
+  labs(title = "Categorias del Indice de desarrollo de cataratas",
        x = "Categoria",
        y = "Frecuencia de datos")
+
+grid.arrange(G1,G2,ncol=2)
 
 # Histograma de K
 ggplot(BDC_categoria, aes(x = K)) + 
@@ -84,29 +96,50 @@ ggplot(BDC_categoria, aes(x = Peso)) +
 
 #Graficos de distribucion empirica 
 
+plot(ecdf(BDC_categoria$IDC),main="Distribucion empirica IDC",xlab="IDC")
+
 plot(ecdf(BDC_categoria$K),main="Distribucion empirica K",xlab="K")
 
 plot(ecdf(BDC_categoria$Peso),main="Distribucion empirica peso",xlab="Peso")
 
+grid.arrange(G1,G2,G3,ncol=3)
+
+
 
 #boxplot
-ggplot(BDC_categoria,aes(cat_catarata,K))+
-  geom_boxplot(fill="blue", alpha= 0.4)
+Y1 <- ggplot(BDC_categoria,aes(cat_catarata,K))+
+  geom_boxplot(fill="blue", alpha= 0.4)+
+  labs(x = "Categoria Catartas",title = "Indice condicion v/s Categoria cataratas")+
+  theme(plot.title= element_text(size = 17),
+        axis.title.x = element_text(size = 14),
+        axis.text.x = element_text(size = 14),
+        axis.title.y = element_text(size = 14),
+        axis.text.y = element_text(size = 14))
 
 #boxplot peso vs cAT_catarata
-ggplot(BDC_categoria,aes(cat_catarata,Peso))+
-  geom_boxplot(fill="blue", alpha= 0.4)
+Y2 <- ggplot(BDC_categoria,aes(cat_catarata,Peso))+
+  geom_boxplot(fill="blue", alpha= 0.4)+
+  theme(plot.title= element_text(size = 17),
+        axis.title.x = element_text(size = 14),
+        axis.text.x = element_text(size = 14),
+        axis.title.y = element_text(size = 14),
+        axis.text.y = element_text(size = 14))
+
+grid.arrange(Y1,Y2,ncol=2)
 
 
 # Boxplot jaua categoria K
-ggplot(BDC_categoria,aes(cat_catarata,K,
+T1 <- ggplot(BDC_categoria,aes(Jaula,K,
                          fill=Jaula))+
-geom_boxplot()
+geom_boxplot()+facet_wrap(~cat_catarata)+
+  theme(legend.position = "none")
 
 # Boxplot 
-ggplot(BDC_categoria,aes(Jaula,K,
+T2 <- ggplot(BDC_categoria,aes(Jaula,K,
                          fill=cat_catarata))+
   geom_boxplot()
+
+grid.arrange(T1,T2,ncol=1)
 
 #Respuesta 4
 
@@ -147,9 +180,14 @@ ggplot(BDC_categoria, aes(x = K)) +
 ggplot(BDC_categoria, aes(x = Peso)) + 
   geom_histogram(col='black', fill='green', alpha=0.4)
 
-#tamaño de los efectos 
+#tamaño de los efectos
 
-plot.design(BDC_categoria $Peso ~ BDC_categoria$cat_catarata + BDC_categoria $Jaula)
+categoria <- BDC_categoria $cat_catarata
+Jaula <- BDC_categoria $Jaula
+plot.design(BDC_categoria $K ~ categoria + Jaula, 
+xlab = "Factores", ylab = "Indice condicion (K)")
+
+
 
 colnames(BDC_categoria)
 
