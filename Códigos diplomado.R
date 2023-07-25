@@ -9,6 +9,8 @@ library(ggplot2)
 library(gridExtra)
 #install.packages("knitr")
 library(knitr)
+#install.packages("lubridate")
+library(lubridate)
 
 # 1° Importar base de datos
 
@@ -192,8 +194,107 @@ xlab = "Factores", ylab = "Indice condicion (K)")
 colnames(BDC_categoria)
 
 
+BDC2 <- B_D_CAT %>% 
+  mutate(cat_catarata=case_when(IDC==0~"normal",
+                                IDC > 0 & IDC <= 8 ~ "leve",
+                                IDC > 8 & IDC <=16 ~ "moderado",
+                                IDC >16 & IDC <=24 ~ "severo")) %>% 
+  mutate(cat_catarata= as.factor(cat_catarata)) %>%
+  mutate(Jaula= as.factor(Jaula)) %>%
+  mutate(Centro= as.factor(Centro)) %>% 
+  mutate (IDC = as.factor(IDC)) %>% 
+  BDC2$Fecha <- as.Date(BDC2$Fecha,format = "%d/%m/%Y")
+
+ BDC2$mes_anio <- format (BDC2$Fecha, "%Y-%m") 
+ 
+
+ BDC2 <- BDC2 %>%
+   mutate (mes_anio = as.factor(mes_anio))
+
+summary(BDC2)
+
+BDC2 %>%
+  group_by(mes_anio) %>%
+  count(cat_catarata) %>%
+  ggplot(aes(x = mes_anio, y = n)) +
+  geom_col(fill = "blue") +
+  labs(title = "",
+       x = "Mes de muestreo",
+       y = "Frecuencia de datos")
+
+
+ggplot(BDC2,aes(mes_anio,cat_catarata))+
+  geom_boxplot(fill="blue", alpha= 0.4)+
+  labs(x = "Categoria Catartas",title = "Indice condicion v/s Categoria cataratas")+
+  theme(plot.title= element_text(size = 17),
+        axis.title.x = element_text(size = 14),
+        axis.text.x = element_text(size = 14),
+        axis.title.y = element_text(size = 14),
+        axis.text.y = element_text(size = 14))
+
+datos_acumulados <- BDC2 %>%
+  group_by(mes_anio,cat_catarata) %>%
+  summarise(recuento = n()) %>%
+  group_by(mes_anio) %>%
+  mutate(acumulado = cumsum(recuento))
+
+ggplot(datos_acumulados, aes(x = mes_anio, y = acumulado, fill =  cat_catarata)) +
+  geom_area(position = "stack") +
+  labs(x = "Mes", y = "Recuento acumulado", title = "Indice desarrollo de cataratas Loncochalgua", fill = "Categoría") +
+  scale_x_discrete(labels = function(x) format(as.Date(paste0(x, "-01")), "%b %Y"))
+
+datos_acumulados <- left_join(datos_acumulados, BDC2, by = "mes")
 
 
 
 
 
+barplot(table(BDC_categoria$cat_catarata))
+
+datos_acumulados <- na.omit(datos_acumulados)
+
+datos_acumulados <- datos_acumulados %>%
+  mutate(porcentaje = acumulado / sum(acumulado) * 100)
+# Orden logico de las categorias 
+
+
+datos_acumulados$cat_catarata <- factor(datos_acumulados$cat_catarata, levels = c("severo", "moderado","leve","normal"))
+
+
+
+ggplot(datos_acumulados, aes(x = mes_anio, y = porcentaje, fill = cat_catarata, label = porcentaje)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Mes", y = "Recuento acumulado", fill = "Categoría") +
+  scale_x_discrete(labels = function(x) format(as.Date(paste0(x, "-01")), "%b %Y")) +
+  geom_text(position = position_stack(vjust = 0.5), size = 3)
+
+ggplot(datos_acumulados, aes(x = mes_anio, y = porcentaje, fill = cat_catarata)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Mes", y = "Recuento acumulado", fill = "Categoría") +
+  scale_x_discrete(labels = function(x) format(as.Date(paste0(x, "-01")), "%b %Y"))
+
+ggplot(datos_acumulados, aes(x = mes_anio, y = porcentaje, fill = cat_catarata)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Mes", y = "Recuento acumulado", fill = "Categoría", title = "Gráfico de barras acumuladas") +
+  scale_x_discrete(labels = function(x) format(as.Date(paste0(x, "-01")), "%b %Y")) +
+  scale_fill_manual(values = c("normal" = "blue", "leve" = "green", "moderado" = "yellow", "severo" = "red"))
+
+ggplot(datos_acumulados, aes(x = mes_anio, y = porcentaje, fill = cat_catarata)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Mes", y = "Recuento acumulado en %", fill = "Categoría catarata", title = "Indice desarrollo cataratas Loncochalgua") +
+  scale_x_discrete(labels = function(x) format(as.Date(paste0(x, "-01")), "%b %Y"),
+                   breaks = unique(datos_acumulados$mes_anio)) +
+  scale_fill_manual(values = c("normal" = alpha("blue", 0.6),
+                               "leve" = alpha("green", 0.6),
+                               "moderado" = alpha("yellow", 0.6),
+                               "severo" = alpha("red", 0.6)))
+
+
+
+
+summary(datos_acumulados)                
+                   
+                   
+                   
+                   
+                   
