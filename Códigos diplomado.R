@@ -292,7 +292,9 @@ ggplot(datos_acumulados, aes(x = mes_anio, y = porcentaje, fill = cat_catarata))
 
 
 
-summary(datos_acumulados)                
+summary(datos_acumulados)     
+
+# valanciar 
                    
                    
                    
