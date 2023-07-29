@@ -294,7 +294,14 @@ ggplot(datos_acumulados, aes(x = mes_anio, y = porcentaje, fill = cat_catarata))
 
 summary(datos_acumulados)     
 
-# valanciar 
+# Modelo de correlacion de spearman 
+
+BD_IDC_K
+
+correlation_spearman <- cor(BDC_categoria$IDC, BDC_categoria$K, method = "spearman")
+
+# Imprimir el resultado
+print(correlation_spearman)
                    
                    
                    
