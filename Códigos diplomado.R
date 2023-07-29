@@ -11,6 +11,10 @@ library(gridExtra)
 library(knitr)
 #install.packages("lubridate")
 library(lubridate)
+#install.packages("pander")
+library(pander)
+
+
 
 # 1° Importar base de datos
 
@@ -296,14 +300,72 @@ summary(datos_acumulados)
 
 # Modelo de correlacion de spearman 
 
-BD_IDC_K
+#Crear base de datos con los datos de K y IDC
 
-correlation_spearman <- cor(BDC_categoria$IDC, BDC_categoria$K, method = "spearman")
+K <- B_D_CAT_new$K
 
-# Imprimir el resultado
-print(correlation_spearman)
-                   
-                   
-                   
+IDC <- B_D_CAT_new$IDC
+
+# Crea objetos X e Y 
+
+
+
+# Realiza test de correlación con hipotesis de dos colas.
+cor.test(B_D_CAT_new$K,B_D_CAT_new$IDC, method = "spearman",
+         alternative = "two.sided")
+
+pander(table(BDC_categoria$cat_catarata,BDC_categoria$Jaula))
+
+
+# Grafico dispersion varibales no parametric. 
+
+Z1 <- ggplot(B_D_CAT_new,aes(IDC,K))+
+  geom_point (fill="blue", alpha= 0.4)+
+  labs(x = "IDC",title = "Indice condicion v/s Indice de desarrllo catarata")+
+  theme(plot.title= element_text(size = 17),
+        axis.title.x = element_text(size = 14),
+        axis.text.x = element_text(size = 14),
+        axis.title.y = element_text(size = 14),
+        axis.text.y = element_text(size = 14))
+
+Z2 <- ggplot(B_D_CAT_new,aes(K,IDC))+
+  geom_point (fill="blue", alpha= 0.4)+
+  labs(x = "K",title = "Indice condicion v/s Indice de desarrllo catarata")+
+  theme(plot.title= element_text(size = 17),
+        axis.title.x = element_text(size = 14),
+        axis.text.x = element_text(size = 14),
+        axis.title.y = element_text(size = 14),
+        axis.text.y = element_text(size = 14))
+
+grid.arrange(Z1,Z2,ncol=2)
+
+X1 <- ggplot(BDC_categoria,aes(cat_catarata,K))+
+  geom_boxplot (fill="blue", alpha= 0.4)+
+  labs(x = "IDC",title = "Indice condicion v/s Categoria de Cataratas")+
+  theme(plot.title= element_text(size = 17),
+        axis.title.x = element_text(size = 14),
+        axis.text.x = element_text(size = 14),
+        axis.title.y = element_text(size = 14),
+        axis.text.y = element_text(size = 14))
+
+X2 <- ggplot(BDC_categoria,aes(K,cat_catarata))+
+  geom_boxplot (fill="blue", alpha= 0.4)+
+  labs(x = "K",title = "Indice condicion v/s Categoria de Cataratas")+
+  theme(plot.title= element_text(size = 17),
+        axis.title.x = element_text(size = 14),
+        axis.text.x = element_text(size = 14),
+        axis.title.y = element_text(size = 14),
+        axis.text.y = element_text(size = 14))
+
+grid.arrange(X1,X2,ncol=2)
+
+
+
+
+
+
+
+
+
                    
                    

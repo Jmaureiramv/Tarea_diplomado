@@ -209,7 +209,7 @@ BDC_categoria %>% group_by(Jaula) %>%
 
 
 
-```{r,echo=FALSE, fig.align="center", fig.width=10, fig.height=6}
+```{r,echo=FALSE, fig.align="center", fig.width=10, fig.height=6, warning=FALSE,error=FALSE,message=FALSE}
 categoria <- BDC_categoria $cat_catarata
 Jaula <- BDC_categoria $Jaula
 plot.design(BDC_categoria $K ~ categoria + Jaula, 
