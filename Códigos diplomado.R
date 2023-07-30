@@ -308,10 +308,14 @@ IDC <- B_D_CAT_new$IDC
 
 # Crea objetos X e Y 
 
+BDC_Spearman<- BDC_categoria %>%
+  mutate(K =as.numeric(K))%>%
+  mutate(IDC =as.numeric(IDC))
 
 
 # Realiza test de correlación con hipotesis de dos colas.
-cor.test(B_D_CAT_new$K,B_D_CAT_new$IDC, method = "spearman",
+
+cor.test(BDC_Spearman$IDC,BDC_Spearman$K, method = "spearman",
          alternative = "two.sided")
 
 pander(table(BDC_categoria$cat_catarata,BDC_categoria$Jaula))
@@ -319,27 +323,7 @@ pander(table(BDC_categoria$cat_catarata,BDC_categoria$Jaula))
 
 # Grafico dispersion varibales no parametric. 
 
-Z1 <- ggplot(B_D_CAT_new,aes(IDC,K))+
-  geom_point (fill="blue", alpha= 0.4)+
-  labs(x = "IDC",title = "Indice condicion v/s Indice de desarrllo catarata")+
-  theme(plot.title= element_text(size = 17),
-        axis.title.x = element_text(size = 14),
-        axis.text.x = element_text(size = 14),
-        axis.title.y = element_text(size = 14),
-        axis.text.y = element_text(size = 14))
-
-Z2 <- ggplot(B_D_CAT_new,aes(K,IDC))+
-  geom_point (fill="blue", alpha= 0.4)+
-  labs(x = "K",title = "Indice condicion v/s Indice de desarrllo catarata")+
-  theme(plot.title= element_text(size = 17),
-        axis.title.x = element_text(size = 14),
-        axis.text.x = element_text(size = 14),
-        axis.title.y = element_text(size = 14),
-        axis.text.y = element_text(size = 14))
-
-grid.arrange(Z1,Z2,ncol=2)
-
-X1 <- ggplot(BDC_categoria,aes(cat_catarata,K))+
+Z1 <- ggplot(BDC_categoria,aes(cat_catarata,K))+
   geom_boxplot (fill="blue", alpha= 0.4)+
   labs(x = "IDC",title = "Indice condicion v/s Categoria de Cataratas")+
   theme(plot.title= element_text(size = 17),
@@ -348,20 +332,60 @@ X1 <- ggplot(BDC_categoria,aes(cat_catarata,K))+
         axis.title.y = element_text(size = 14),
         axis.text.y = element_text(size = 14))
 
-X2 <- ggplot(BDC_categoria,aes(K,cat_catarata))+
-  geom_boxplot (fill="blue", alpha= 0.4)+
-  labs(x = "K",title = "Indice condicion v/s Categoria de Cataratas")+
+Z2 <-ggplot(B_D_CAT_new,aes(IDC,K))+
+  geom_point (fill="blue", alpha= 0.4)+
+  geom_smooth()+
+  labs(x = "IDC",title = "Indice condicion v/s Categoria de Cataratas")+
   theme(plot.title= element_text(size = 17),
         axis.title.x = element_text(size = 14),
         axis.text.x = element_text(size = 14),
         axis.title.y = element_text(size = 14),
         axis.text.y = element_text(size = 14))
 
-grid.arrange(X1,X2,ncol=2)
+
+
+grid.arrange(Z1,Z2,ncol=2)
+
+Y1 <- ggplot(BDC_categoria,aes(cat_catarata,K))+
+  geom_boxplot(fill="blue", alpha= 0.4)+
+  labs(x = "Categoria Catartas",title = "Indice condicion v/s Categoria cataratas")+
+  theme(plot.title= element_text(size = 17),
+        axis.title.x = element_text(size = 14),
+        axis.text.x = element_text(size = 14),
+        axis.title.y = element_text(size = 14),
+        axis.text.y = element_text(size = 14))
+
+#boxplot peso vs cAT_catarata
+Y2 <- ggplot(BDC_categoria,aes(cat_catarata,Peso))+
+  geom_boxplot(fill="blue", alpha= 0.4)+
+  labs(x = "Categoria Catartas",title = "Peso v/s Categoria cataratas")+
+  theme(plot.title= element_text(size = 17),
+        axis.title.x = element_text(size = 14),
+        axis.text.x = element_text(size = 14),
+        axis.title.y = element_text(size = 14),
+        axis.text.y = element_text(size = 14))
+
+grid.arrange(Y1,Y2,ncol=2)
+
+
+ggplot(B_D_CAT_new,aes(IDC,K))+
+  geom_point (fill="blue", alpha= 0.4)+
+  geom_smooth (method = 'loess', formula = 'y ~ x') +
+  labs(x = "IDC",title = "Indice condicion v/s Categoria de Cataratas")+
+  theme(plot.title= element_text(size = 17),
+        axis.title.x = element_text(size = 14),
+        axis.text.x = element_text(size = 14),
+        axis.title.y = element_text(size = 14),
+        axis.text.y = element_text(size = 14))
 
 
 
 
+# Ruta de la imagen (puedes utilizar una ruta local o una URL)
+ruta_imagen <- "ruta/de/la/imagen.jpg"
+
+# Mostrar la imagen en el reporte
+knitr::include_graphics(ruta_imagen)
 
 
 
