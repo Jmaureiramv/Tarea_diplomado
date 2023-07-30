@@ -2,8 +2,9 @@
 title: "Proyecto diplomado exploración de datos"
 author: "Jonathan Maureira"
 date: "2023-07-29"
-
-
+output:
+  html_document:
+    css: estilo_global.css
 ---
 
 ```{r librerias, include=FALSE}
@@ -29,17 +30,18 @@ Jmaureira.mv@gmail.com
 
 ## Objetivos:
 
-Descripcion de la problematica:
-
-Cualquier alteración física en la población de salmónidos de producción, representan un desafio significativo en los resultados productivos.
+Descripción de la problemática:
+<div style="text-align: justify;">
+Cualquier alteración física en la población de salmónidos de producción, representan un desafío significativo en los resultados productivos.
 
 Las cataratas se definen como la alteración ocular que resulta en la opacidad del cristalino. Esta opacidad disminuye la cantidad de luz que ingresa al ojo por ende disminuye la capacidad de visión en los peces.
 
-Se plantea la hipotesis de que una mayor severidad de cataratas en los peces tendra un impacto relevante en la producción, ya que los peces afectados tendrian una menor capacidad de comptetividad por el alimento con respecto a los peces sanos.En este estudio, se examinará el Índice de Desarrollo de Cataratas (IDC), una puntuación que varía entre 0 y 24. Para calcular este índice, se combinan dos subíndices: uno que evalúa la extensión de la catarata en una escala de 0 a 4 , y otro que mide la densidad de la catarata en una escala de 1 a 3. Primero, se suman los subíndices de ambos ojos y luego se multiplican por el subíndice de densidad.
+Se plantea la hipótesis de que una mayor severidad de cataratas en los peces tendrá un impacto relevante en la producción, ya que los peces afectados tendrían una menor capacidad de competitividad por el alimento, con respecto a los peces sanos. En este estudio, se examinará el Índice de Desarrollo de Cataratas (IDC), una puntuación que varía entre 0 y 24. Para calcular este índice, se combinan dos subíndices: uno que evalúa la extensión de la catarata en una escala de 0 a 4, y otro que mide la densidad de la catarata en una escala de 1 a 3. Primero, se suman los subíndices de ambos ojos y luego se multiplican por el subíndice de densidad.
 
 El resultado del índice se categoriza según la siguiente escala: un valor de 0 indica un pez normal (sin catarata), valores entre 1 y 8 se clasifican como catarata leve, valores entre 9 y 12 se consideran moderados, y valores entre 13 y 24 se clasifican como catarata severa.
 
 Con este enfoque, se pretende evaluar el nivel de desarrollo de cataratas en los peces y clasificarlos según su severidad, lo que permitirá comprender mejor el impacto de las cataratas en la población de peces y su producción.
+</div>
 <br>
 <br>
 
@@ -93,8 +95,9 @@ B_D_CAT_new$Fecha <- as.Date(B_D_CAT_new$Fecha,format = "%d/%m/%Y")
 B_D_CAT_new$Fecha <- as.Date(B_D_CAT_new$Fecha,format = "%d/%m/%Y")
 ```
 
-
+<div style="text-align: justify;">
 **Nota:** En este resumen de la base de datos de cataratas, se presenta el universo completo de datos sin aplicar ningún filtro. Se han detectado 3206 observaciones que abarcan 8 variables. Se ha realizado un análisis para verificar la presencia de datos duplicados, y no se han encontrado registros. Además, se han eliminado los datos faltantes utilizando la función na.omit. Además, se ha llevado a cabo una filtración de datos no lógicos mediante la función filter. En particular, se han excluido los valores extremos de la variable K (Índice de Condición), es decir, aquellos que superan el valor de 2,5 de K.
+</div>
 <br>
 <br>
 ```{r, echo=FALSE}
@@ -153,8 +156,9 @@ summary(BDC_categoria)
 dim(BDC_categoria)
 
 ```
+<div style="text-align: justify;">
 **Nota:** En este resumen de la base de datos de cataratas, se aprecia la disminucion de la observaciones luego de aplicar los filtros, quedando 730 observaciones con 9 variables.Se ha incorporado la variable cat_catarata (categoría de cataratas). Utilizando la función case_when, se asignaron categorías a los puntajes del Índice de Desarrollo de Cataratas, y se les proporcionará un orden lógico de caracterización de menos a más, reflejando el grado de severidad, gracias al uso de la función levels. 
-
+</div>
 
 ## Analisis exploratorio
 
@@ -221,13 +225,15 @@ BDC_categoria$cat_catarata <- factor(BDC_categoria$cat_catarata, levels = c("nor
 <br>
 
 
-```{r, echo=FALSE, fig.align="center", fig.width=10, fig.height=6}
+```{r, echo=FALSE}
 pander(table(BDC_categoria$cat_catarata,BDC_categoria$Jaula))
+
 ```
 
 <br>
+<div style="text-align: justify;">
 **Nota** Se puede apreciar una falta de balance en los datos, debido a que la cantidad de individuos entre cada jaula varía significativamente y además, existe una disparidad en la cantidad de observaciones por cada categoría.
-
+</div>
 <br>
 <br>
  
@@ -323,8 +329,9 @@ grid.arrange(Y1,Y2,ncol=2)
 
 ```
 
-
+<div style="text-align: justify;">
 **Nota** La variable peso no seria la mas indicada por que la toma de muestras de datos se tomaron en distintas fechas del ciclo productivo. La variable de K es la mas indicada.
+</div>
 <br>
 <br>
 <br>
@@ -359,7 +366,9 @@ Jaula <- BDC_categoria $Jaula
 plot.design(BDC_categoria $K ~ categoria + Jaula, 
 xlab = "Factores", ylab = "Indice condicion (K)")
 ```
+<div style="text-align: justify;">
 **Nota** En ambos factores, se observa una gran magnitud de efecto. En categoría severa junto con la j 204 se observa una menor media del índice de condición (K).
+</div>
 <br>
 <br>
 <br>
@@ -383,17 +392,17 @@ cor.test(BDC_Spearman$IDC,BDC_Spearman$K, method = "spearman",
 ```{r, echo=FALSE,fig.align="center", fig.width=10, fig.height=6}
 Z1 <- ggplot(BDC_categoria,aes(cat_catarata,K))+
   geom_boxplot (fill="blue", alpha= 0.4)+
-  labs(x = "IDC",title = "Indice condicion v/s Categoria de Cataratas")+
+  labs(x = "Categoria de cataratas",title = "Indice condicion v/s Categoria de Cataratas")+
   theme(plot.title= element_text(size = 17),
         axis.title.x = element_text(size = 14),
         axis.text.x = element_text(size = 14),
         axis.title.y = element_text(size = 14),
         axis.text.y = element_text(size = 14))
 
-Z2 <-ggplot(B_D_CAT_new,aes(IDC,K))+
+Z2 <-ggplot(BDC_Spearman,aes(IDC,K))+
   geom_point (fill="blue", alpha= 0.4)+
   geom_smooth (method = 'loess', formula = 'y ~ x') +
-  labs(x = "IDC",title = "Indice condicion v/s Categoria de Cataratas")+
+  labs(x = "IDC",title = "Indice condicion v/s Indice desarrollo cataratas")+
   theme(plot.title= element_text(size = 17),
         axis.title.x = element_text(size = 14),
         axis.text.x = element_text(size = 14),
@@ -407,4 +416,16 @@ grid.arrange(Z1,Z2,ncol=2)
 ```
 
 
+## Resultados: 
+<div style="text-align: justify;">
+Según los resultados del análisis de conexiones de Spearman, se ha aceptado la hipótesis nula debido a la falta de evidencia para rechazarla. El coeficiente de concreciones (rho) calculado es de -0,03063902, lo que no es significativamente diferente de cero, como se refleja en el valor de probabilidad (p-value) de 0,4085, el cual es mayor a 0,05.
 
+Estos resultados sugieren que no existe una relación significativa entre el Índice de Condición (K) y la severidad de las cataratas en esta base de datos.
+
+Aunque en el gráfico se aprecia una leve tendencia de conexión negativa, es probable que esta tendencia no sea significativa debido a la baja severidad de las cataratas.
+
+En resumen, de acuerdo con el análisis estadístico y la visualización gráfica, no se ha encontrado una correlación significativa entre el Índice de Condición y la severidad de las cataratas en la muestra analizada.
+<br>
+<br>
+
+</div>

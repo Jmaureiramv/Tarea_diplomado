@@ -332,52 +332,18 @@ Z1 <- ggplot(BDC_categoria,aes(cat_catarata,K))+
         axis.title.y = element_text(size = 14),
         axis.text.y = element_text(size = 14))
 
-Z2 <-ggplot(B_D_CAT_new,aes(IDC,K))+
+Z2 <-ggplot(BDC_Spearman,aes(IDC,K))+
   geom_point (fill="blue", alpha= 0.4)+
-  geom_smooth()+
-  labs(x = "IDC",title = "Indice condicion v/s Categoria de Cataratas")+
+  geom_smooth (method = 'loess', formula = 'y ~ x') +
+  labs(x = "IDC",title = "Indice condicion v/s Indice desarrollo cataratas")+
   theme(plot.title= element_text(size = 17),
         axis.title.x = element_text(size = 14),
         axis.text.x = element_text(size = 14),
         axis.title.y = element_text(size = 14),
         axis.text.y = element_text(size = 14))
-
 
 
 grid.arrange(Z1,Z2,ncol=2)
-
-Y1 <- ggplot(BDC_categoria,aes(cat_catarata,K))+
-  geom_boxplot(fill="blue", alpha= 0.4)+
-  labs(x = "Categoria Catartas",title = "Indice condicion v/s Categoria cataratas")+
-  theme(plot.title= element_text(size = 17),
-        axis.title.x = element_text(size = 14),
-        axis.text.x = element_text(size = 14),
-        axis.title.y = element_text(size = 14),
-        axis.text.y = element_text(size = 14))
-
-#boxplot peso vs cAT_catarata
-Y2 <- ggplot(BDC_categoria,aes(cat_catarata,Peso))+
-  geom_boxplot(fill="blue", alpha= 0.4)+
-  labs(x = "Categoria Catartas",title = "Peso v/s Categoria cataratas")+
-  theme(plot.title= element_text(size = 17),
-        axis.title.x = element_text(size = 14),
-        axis.text.x = element_text(size = 14),
-        axis.title.y = element_text(size = 14),
-        axis.text.y = element_text(size = 14))
-
-grid.arrange(Y1,Y2,ncol=2)
-
-
-ggplot(B_D_CAT_new,aes(IDC,K))+
-  geom_point (fill="blue", alpha= 0.4)+
-  geom_smooth (method = 'loess', formula = 'y ~ x') +
-  labs(x = "IDC",title = "Indice condicion v/s Categoria de Cataratas")+
-  theme(plot.title= element_text(size = 17),
-        axis.title.x = element_text(size = 14),
-        axis.text.x = element_text(size = 14),
-        axis.title.y = element_text(size = 14),
-        axis.text.y = element_text(size = 14))
-
 
 
 
