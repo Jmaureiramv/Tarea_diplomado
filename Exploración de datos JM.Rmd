@@ -1,7 +1,7 @@
 ---
 title: "Proyecto diplomado exploración de datos"
 author: "Jonathan Maureira"
-date: "2023-07-29"
+date: "2023-08-06"
 output:
   html_document:
     css: estilo_global.css
@@ -23,9 +23,10 @@ library(pander)
 
 ```
 # Titulo: Cataratas e impacto productivo en Salmo Salar
-
 Autor: Jonathan Maureira
+
 Médico Veterinaria
+
 Jmaureira.mv@gmail.com
 
 ## Objetivos:
@@ -36,11 +37,12 @@ Cualquier alteración física en la población de salmónidos de producción, re
 
 Las cataratas se definen como la alteración ocular que resulta en la opacidad del cristalino. Esta opacidad disminuye la cantidad de luz que ingresa al ojo por ende disminuye la capacidad de visión en los peces.
 
-Se plantea la hipótesis de que una mayor severidad de cataratas en los peces tendrá un impacto relevante en la producción, ya que los peces afectados tendrían una menor capacidad de competitividad por el alimento, con respecto a los peces sanos. En este estudio, se examinará el Índice de Desarrollo de Cataratas (IDC), una puntuación que varía entre 0 y 24. Para calcular este índice, se combinan dos subíndices: uno que evalúa la extensión de la catarata en una escala de 0 a 4, y otro que mide la densidad de la catarata en una escala de 1 a 3. Primero, se suman los subíndices de ambos ojos y luego se multiplican por el subíndice de densidad.
+Se plantea la hipótesis de que una mayor severidad de cataratas en los peces tendrá un impacto relevante en la producción, ya que los peces afectados tendrían una menor capacidad de competitividad por el alimento, con respecto a los peces sanos. En este estudio, se examinará el Índice de Desarrollo de Cataratas (IDC), cuya puntuación varía entre 0 y 24. Para calcular este índice, se combinan dos subíndices: uno que evalúa la extensión de la catarata en una escala de 0 a 4 y otro que mide la densidad de la catarata en una escala de 1 a 3. Primero, se suman los subíndices de ambos ojos y luego se promedian los puntos de densidad de cada ojo del pez y por ultimos se multiplican los subíndicen de extencion x el subíndice de densidad.
 
-El resultado del índice se categoriza según la siguiente escala: un valor de 0 indica un pez normal (sin catarata), valores entre 1 y 8 se clasifican como catarata leve, valores entre 9 y 12 se consideran moderados, y valores entre 13 y 24 se clasifican como catarata severa.
+El resultado del índice de desarrollo de cataratas se categoriza según la siguiente escala: un valor de 0 indica un pez normal (sin catarata), valores entre 1 y 8 se clasifican como catarata leve, valores entre 9 y 12 se consideran moderados, y valores entre 13 y 24 se clasifican como catarata severa.
 
-Con este enfoque, se pretende evaluar el nivel de desarrollo de cataratas en los peces y clasificarlos según su severidad, lo que permitirá comprender mejor el impacto de las cataratas en la población de peces y su producción.
+Con este enfoque, se pretende evaluar el nivel de desarrollo de cataratas en los peces, clasificarlos según su severidad y relacionarlo con el Indice de Condicion (K) según la formula de Fulton (K)=(W/L^3)*100, donde W= peso del pez en gramos y  L= longitud la cual es elevada al cubo. 
+Esto permitirá comprender mejor el impacto de las cataratas en la población de peces y su producción.
 </div>
 <br>
 <br>
@@ -52,7 +54,11 @@ Con este enfoque, se pretende evaluar el nivel de desarrollo de cataratas en los
 knitr::include_graphics ("Score de cataratas .jpg")
 
 ```
-Tabla resumen de Categoria cataratas.
+**Cita Bibliografica:** Wall T., Bjerkås E. 1999. A simplified method of scoring cataracts in fish. Bull. Eur. Pathol. 19(4): 1
+https://eafp.org/download/1999-Volume19/Issue%204/19%204%20162-165.pdf
+<br>
+<br>
+**Tabla resumen de Categoria cataratas**
 
 | Indice Desarrollo de Cataratas  IDC| Categoria de cataratas |
 |:-------:|:------:|
@@ -61,8 +67,11 @@ Tabla resumen de Categoria cataratas.
 | 9-12 | Moderado |
 | 13-24 | Severo |
 
+<br>
+<br>
 
-## Base de datos.
+
+**Base de datos**
 
 
 ```{r base de datos y limpieza}
@@ -386,6 +395,10 @@ xlab = "Factores", ylab = "Indice condicion (K)")
 
 ## Analisis de correlacion de Spearman's
 
+Hipótesis nula (H0): No existe correlacion entrel el indice de condición (K) de los peces con respecto a la severidad del indice de desarrollo de las cataratas (IDC). 
+
+Hipótesis alternativa (H1): Existe correlacion entrel el indice de condición (K) de los peces con respecto a la severidad del indice de desarrollo de las cataratas (IDC). 
+
 ```{r,echo=FALSE,warning=FALSE,error=FALSE,message=FALSE}
 
 BDC_Spearman<- BDC_categoria %>%
@@ -436,16 +449,20 @@ Estos resultados sugieren que no existe una relación significativa entre el Ín
 Aunque en el gráfico se aprecia una leve tendencia de conexión negativa, es probable que esta tendencia no sea significativa debido a la baja severidad de las cataratas.
 
 En resumen, de acuerdo con el análisis estadístico y la visualización gráfica, no se ha encontrado una correlación significativa entre el Índice de Condición y la severidad de las cataratas en la muestra analizada.
+</div>
 <br>
 <br>
 
-</div>
+
 
 
 ## Analisis de correlacion de Kruskal-Wallis
 
 
 Hipótesis nula (H0): No hay diferencias significativas en las medianas del índice de condición K entre las categorías de cataratas. 
+
+Hipótesis alternativa (H1): Existen diferencias significativas en las medianas del índice de condición K entre las categorías de cataratas.
+
 
 
 ```{r, echo=FALSE}
@@ -456,13 +473,16 @@ kruskal.test(K ~ cat_catarata, data = BDC_categoria)
 
 ## Resultados: 
 <div style="text-align: justify;">
+
 Dado que el valor de probabilidad (p = 0.135) es mayor que el nivel de significancia utilizado P =  0.05, no hay evidencia para rechazar la hipótesis nula.
+
 No se encontraron diferencias significativas en las medianas del índice de condición K y entre las categorías de cataratas.
 
 Según la prueba de Kruskal-Wallis, no podemos concluir que la categoría de cataratas tenga un efecto significativo sobre el índice de condición K. 
 
+</div>
 <br>
 <br>
 
-</div>
+
 
