@@ -13,6 +13,8 @@ library(knitr)
 library(lubridate)
 #install.packages("pander")
 library(pander)
+#install.packages("stats")
+library(stats) 
 
 
 
@@ -355,7 +357,18 @@ knitr::include_graphics(ruta_imagen)
 
 
 
+kruskal.test(K ~ cat_catarata, data = BDC_Spearman)
+
+kruskal.test(K ~ cat_catarata, data = BDC_categoria)
 
 
-                   
+ggplot (BDC_categoria, aes(x = cat_catarata, y = K)) +
+  geom_boxplot() +
+  xlab("Categoría de Cataratas") +
+  ylab("Índice de Condición K") +
+  ggtitle("Distribución del Índice de Condición K por Categoría de Cataratas")             
+
+  
+
+kable(table(BDC_categoria$cat_catarata,BDC_categoria$Jaula),align = "c")                
                    

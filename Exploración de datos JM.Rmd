@@ -52,8 +52,14 @@ Con este enfoque, se pretende evaluar el nivel de desarrollo de cataratas en los
 knitr::include_graphics ("Score de cataratas .jpg")
 
 ```
+Tabla resumen de Categoria cataratas.
 
-
+| Indice Desarrollo de Cataratas  IDC| Categoria de cataratas |
+|:-------:|:------:|
+| 0 | Normal | 
+| 1-8 | Leve | 
+| 9-12 | Moderado |
+| 13-24 | Severo |
 
 
 ## Base de datos.
@@ -225,8 +231,13 @@ BDC_categoria$cat_catarata <- factor(BDC_categoria$cat_catarata, levels = c("nor
 <br>
 
 
-```{r, echo=FALSE}
-pander(table(BDC_categoria$cat_catarata,BDC_categoria$Jaula))
+```{r, echo=FALSE,fig.align="center" }
+
+
+kable(table(BDC_categoria$cat_catarata,BDC_categoria$Jaula),align = "c")
+
+
+
 
 ```
 
@@ -429,3 +440,29 @@ En resumen, de acuerdo con el análisis estadístico y la visualización gráfic
 <br>
 
 </div>
+
+
+## Analisis de correlacion de Kruskal-Wallis
+
+
+Hipótesis nula (H0): No hay diferencias significativas en las medianas del índice de condición K entre las categorías de cataratas. 
+
+
+```{r, echo=FALSE}
+
+kruskal.test(K ~ cat_catarata, data = BDC_categoria)
+
+```
+
+## Resultados: 
+<div style="text-align: justify;">
+Dado que el valor de probabilidad (p = 0.135) es mayor que el nivel de significancia utilizado P =  0.05, no hay evidencia para rechazar la hipótesis nula.
+No se encontraron diferencias significativas en las medianas del índice de condición K y entre las categorías de cataratas.
+
+Según la prueba de Kruskal-Wallis, no podemos concluir que la categoría de cataratas tenga un efecto significativo sobre el índice de condición K. 
+
+<br>
+<br>
+
+</div>
+
